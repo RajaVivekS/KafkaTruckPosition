@@ -15,15 +15,17 @@ public class ConsumerApplication {
 	public static void main(String[] args) {
 		Properties props = new Properties();
 		props.setProperty("bootstrap.servers", "localhost:9092");
-		props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer");
-		props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+		props.setProperty("key.deserializer",  "org.apache.kafka.common.serialization.IntegerDeserializer");
+		props.setProperty("value.deserializer", CustomDeserializer.class.getName());
 		props.setProperty("group.id", "OrderGroup");
-		KafkaConsumer<Integer, String> consumer = new KafkaConsumer<>(props);
-		consumer.subscribe(Collections.singletonList("OrderTopic"));
-		ConsumerRecords<Integer, String> record = consumer.poll(Duration.ofSeconds(180));
-		for (ConsumerRecord<Integer, String> consumerRecord : record) {
-			System.out.println("Truck ID: "+consumerRecord.key());
-			System.out.println("Position:"+consumerRecord.value());			
+		KafkaConsumer<Integer, Truck> consumer = new KafkaConsumer<>(props);
+		consumer.subscribe(Collections.singletonList("OrderCustomTopic"));
+		ConsumerRecords<Integer, Truck> record = consumer.poll(Duration.ofSeconds(180));
+		for (ConsumerRecord<Integer, Truck> consumerRecord : record) {
+			Truck value = consumerRecord.value();
+			System.out.println("Truck ID: "+value.getId() );
+			System.out.println("Latitude :"+ value.getLatitude());
+			System.out.println("Longitude :"+value.getLongitude());
 		}
 		consumer.close();
 	}

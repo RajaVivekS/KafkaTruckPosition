@@ -13,14 +13,14 @@ public class ProducerApplication {
 	public static void main(String[] args) {
 		Properties props = new Properties();
 		props.setProperty("bootstrap.servers", "localhost:9092");
-		props.setProperty("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
-		props.setProperty("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		String Latitude="22 N";
-		String Longitude="34 E";
-		String lat_long=Latitude+","+Longitude;
-		int id=4;
-		KafkaProducer<Integer, String> producer = new KafkaProducer<>(props);
-		ProducerRecord<Integer, String> record = new ProducerRecord<>("OrderTopic", id,lat_long);
+		props.setProperty("key.serializer","org.apache.kafka.common.serialization.IntegerSerializer");
+		props.setProperty("value.serializer", CustomSerializer.class.getName());
+		Truck truck = new Truck();
+		truck.setId(14);
+		truck.setLatitude("24 N");
+		truck.setLongitude("28 E");
+		KafkaProducer<Integer, Truck> producer = new KafkaProducer<>(props);
+		ProducerRecord<Integer, Truck> record = new ProducerRecord<>("OrderCustomTopic", truck.getId(),truck);
 		try {
 			producer.send(record);
 			System.out.println("Message sent");
